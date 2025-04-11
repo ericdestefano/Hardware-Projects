@@ -1,4 +1,4 @@
-# R5-Fedora (Plamsa)
+# R5-Fedora (Plasma)
 
 ### 0- Preface: The H97 Chipset Showstopper
 
