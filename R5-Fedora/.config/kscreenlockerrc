@@ -1,1 +1,4 @@
-/home/eric/.config/kscreenlockerrc
+[Daemon]
+Autolock=false
+LockOnResume=false
+Timeout=0

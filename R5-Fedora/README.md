@@ -109,11 +109,41 @@ As I noted above, I like to have my workstation (at home) auto login and be read
 
 Due to auto login being enabled, I don’t need to configure both logind and KDE/Plasma for idle system hibernation. I also have idle/user lock disabled in the KDE/Plasma GUI—so aside from just logging me in, logind is never really present/active. As a result, I just have hibernation enabled after 30 minutes of idle activity in the GUI.
 
-Please note: To hibernate up to 32GB of RAM, I have a 34GiB (gibibyte) SWAP partition—for the entire memory contents, plus a little extra.
+To hibernate up to 32GB of RAM, I have a 34GiB (gibibyte) SWAP partition—for the entire memory contents, plus a little extra.
 
 *Note: I have "require password" disabled for locking. So when the system goes into hibernate mode, the screen blanks, reappears briefly, and then successfully suspends. This is due to the system checking with SDDM, which isn’t needed, as there is no requirement to use SDDM for a lock. This is normal behavior.*
 
+##### Staying Alive
+While aggressive and clever power savings is the order of the day, if I connect remotely—I need the exact opposite to happen. No sleeping, no hibernation—stay awake until I conclude my SSH session. Thanks.
+
+To solve this, I added a small background process that keeps the system active during remote access:
+
+**`.bashrc` addition:**
+```bash
+# Only do this for interactive SSH sessions
+if [[ -n "$SSH_CONNECTION" ]] && ! pgrep -u eric -f fake-activity.sh > /dev/null; then
+    ~/.ssh/fake-activity.sh &
+    export FAKE_ACTIVITY_PID=$!
+    trap "kill $FAKE_ACTIVITY_PID 2>/dev/null" EXIT
+fi
+
 ---
+
+**~/.ssh/fake-activity.sh:**
+```bash
+#!/bin/bash
+
+export XDG_RUNTIME_DIR=/run/user/$(id -u eric)
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+
+while true; do
+    dbus-send --session --dest=org.freedesktop.ScreenSaver --type=method_call \
+      /ScreenSaver org.freedesktop.ScreenSaver.SimulateUserActivity
+    sleep 300
+done
+```
+
+Both of these are available in the project repo for reference.
 
 #### Wake On LAN
 
