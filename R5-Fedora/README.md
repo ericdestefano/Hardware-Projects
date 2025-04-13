@@ -90,6 +90,7 @@ Having done a proof of concept, and having the proof of concept proven - it was 
 
 - **Auto login**: I like the system to be ready for use at boot, or resume (S3, S4, S5)—as much as I adore SDDM.
 - **Power Savings**: Hibernate the computer after 30 minutes.
+- **Staying Alive**: The inverse of power savings when conneted remotely.
 - **Wake on LAN**: Energy is expensive. Using Homebridge, most of my devices remain in a hibernate (S4) or soft shutdown state (S5) until needed.
 - **Hypervisors**: VMware Workstation Pro, VirtualBox, QEMU, and TAP Adapters set up for my various virtual projects.
 - **GUI Customization**: We all have our desktop look and feel preferences—whether it's a simple wallpaper or full window customizing.
@@ -113,7 +114,9 @@ To hibernate up to 32GB of RAM, I have a 34GiB (gibibyte) SWAP partition—for t
 
 *Note: I have "require password" disabled for locking. So when the system goes into hibernate mode, the screen blanks, reappears briefly, and then successfully suspends. This is due to the system checking with SDDM, which isn’t needed, as there is no requirement to use SDDM for a lock. This is normal behavior.*
 
-##### Staying Alive
+---
+
+#### Staying Alive
 While aggressive and clever power savings is the order of the day, if I connect remotely—I need the exact opposite to happen. No sleeping, no hibernation—stay awake until I conclude my SSH session. Thanks.
 
 To solve this, I added a small background process that keeps the system active during remote access:
